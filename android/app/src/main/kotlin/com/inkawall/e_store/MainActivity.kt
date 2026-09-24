@@ -1,4 +1,4 @@
-package com.example.e_store
+package com.inkawall.e_store
 
 import io.flutter.embedding.android.FlutterActivity
 
