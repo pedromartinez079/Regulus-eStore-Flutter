@@ -1,4 +1,3 @@
-import 'package:e_store/widgets/card.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_store/services/regulus_vercel_api.dart';
 import 'package:e_store/screens/filter.dart';
 import 'package:e_store/screens/about.dart';
+import 'package:e_store/screens/search.dart';
+import 'package:e_store/widgets/products_grid.dart';
 import 'package:e_store/providers/filter_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -183,25 +184,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      int crossAxisCount = constraints.maxWidth < 600 ? 2 : 4;
-                      return GridView.builder(
-                        //shrinkWrap: true,
-                        //physics: NeverScrollableScrollPhysics(),
-                        itemCount: currentItems.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 4 / 7, // Adjust
-                        ),
-                        itemBuilder: (context, index) {
-                          return ProductCard(product: currentItems[index]);
-                        },
-                      );
-                    },
-                  ),
+                  child: ProductsGrid(products: currentItems),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,7 +211,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Products',
+          'E-Store',
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
         actions: [
@@ -243,6 +226,17 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               );
             },
             icon: Icon(Icons.filter_alt),
+          ),
+          // Search
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => SearchScreen(),
+                )
+              );
+            },
+            icon: Icon(Icons.search),
           ),
           // About screen
           IconButton(
