@@ -23,10 +23,9 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
   Widget? _scaffoldBody;
   bool _isInformationFetched = false;
   bool _isError = false;
-  bool _isFilterApplied = false;
   String _errorText = 'Information source failure\n\n';
   List _categories = [];
-  List? _products;
+  String _sort = ''; // - '?sort=-1'; + '?sort=1'
   List? _filteredProducts = [];
   final int itemsPerPage = 20;
   int currentPage = 0;
@@ -35,14 +34,13 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     setState(() {
       currentPage = 0;
       _isInformationFetched = false;
-      _isFilterApplied = false;
     });
   }
 
   void _getInformation() async {
     print('getting information...');
     final categories = await fetchFromRegulusVercel('productlines');
-    final products = await fetchFromRegulusVercel('products');
+    final products = await fetchFromRegulusVercel('products$_sort');
 
     if (categories.isNotEmpty && products.isNotEmpty) {      
       if (categories.keys.contains('error')) {
@@ -64,20 +62,15 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
         //print(categories['categories']);
       }
       if (products.keys.contains('products')) {
-        setState(() {
-          _products = products['products'];
-          _filteredProducts = _products;
-        });
-        //print(products['products'][0]['code']);
+        _applyFilter(products['products']);
       }
       setState(() {
         _isInformationFetched = true;
-        _isFilterApplied = false;
       });          
     }
   }
 
-  void _applyFilter() async {
+  void _applyFilter(List products) async {
     print('filtering products...');
     List filteredCategories = [];
     final filter = ref.read(filterProvider.notifier).getFilter();
@@ -103,19 +96,17 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     
     List filteredProducts = [];
     if (filteredCategories.isNotEmpty) {
-      for (Map p in _products!) {
+      for (Map p in products) {
         if (filteredCategories.contains(p['productLine'])) {
           filteredProducts.add(p);
         }
       }
       setState(() {
         _filteredProducts = filteredProducts;
-        _isFilterApplied = true;
       });      
     } else {
       setState(() {
-        _filteredProducts = _products;
-        _isFilterApplied = true;
+        _filteredProducts = products;
       });
     }
   }
@@ -176,7 +167,6 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
           );
         });
       } else {
-        if (!_isFilterApplied) { _applyFilter(); }
         setState(() {          
           _scaffoldBody = Padding(
             padding: const EdgeInsets.all(10),
@@ -215,6 +205,36 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
         actions: [
+          // Update screen
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _sort = '';
+                _isInformationFetched = false;
+              });
+            },
+            icon: Icon(Icons.refresh),
+          ),
+          // Ascending order +
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _sort = '?sort=1';
+                _isInformationFetched = false;
+              });
+            },
+            icon: Icon(Icons.add),
+          ),
+          // Descending order -
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _sort = '?sort=-1';
+                _isInformationFetched = false;
+              });
+            },
+            icon: Icon(Icons.remove),
+          ),
           // Filter
           IconButton(
             onPressed: () {
