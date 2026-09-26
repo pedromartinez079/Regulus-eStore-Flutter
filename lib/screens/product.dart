@@ -1,15 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProductPage extends StatelessWidget {
-  const ProductPage({super.key, required this.product});
+import 'package:e_store/providers/cart_provider.dart';
+
+class ProductScreen extends ConsumerStatefulWidget {
+  const ProductScreen({super.key, required this.product});
 
   final Map product;
 
   @override
+  ConsumerState<ProductScreen> createState() {
+    return _ProductScreenState();
+  }
+}
+
+class _ProductScreenState extends ConsumerState<ProductScreen> {
+  num _quantity = 0;
+
+  void _addCart(Map product, List cart) {
+      //List cart = ref.read(cartProvider.notifier).getCart();
+      List list = List.from(cart);
+      num quantity = 0;
+
+      for (Map p in list) {
+        if (p['code']==product['code']) {
+          p['quantity'] += 1;
+          quantity = p['quantity'];
+        }
+      }
+
+      if (quantity == 0) {
+        quantity += 1;
+        list.add({
+          'code': product['code'],
+          'pricePEN': product['pricePEN'],
+          'priceUSD': product['priceUSD'],
+          'quantity': quantity,
+        });
+      }
+      
+      ref.read(cartProvider.notifier).setCart(Cart(list: list));
+      setState(() {
+        _quantity = quantity;
+      });
+      print(ref.read(cartProvider.notifier).getCart());
+    }
+
+  @override
   Widget build(BuildContext context) {
+    Map product = widget.product;
+    List cart = ref.read(cartProvider.notifier).getCart();
+    for (Map p in cart) {
+      if (p['code']==product['code']) {
+        setState(() {
+          _quantity = p['quantity'];
+        });
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text(product['code']),),
+      appBar: AppBar(
+        title: Text(product['code']),
+        actions: [
+          // Add to shoping cart
+          IconButton(
+            onPressed: () {_addCart(product, cart);},
+            icon: Icon(Icons.add_shopping_cart),
+          ),
+          // Buy quantity
+          Text('$_quantity'),          
+          // Shopping cart
+          IconButton(
+            onPressed: () {
+
+            },
+            icon: Icon(Icons.shopping_cart),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Row(
           children: [
@@ -22,6 +91,8 @@ class ProductPage extends StatelessWidget {
   }
 
   Widget _buildProductInformation(BuildContext context) {
+    Map product = widget.product;
+
     return Column(
       children: [
         Expanded(
@@ -50,6 +121,8 @@ class ProductPage extends StatelessWidget {
   }
 
   Widget _buildPriceStockSection(BuildContext context) {
+    Map product = widget.product;
+
     return Column(
       children: [
         Row(
@@ -161,6 +234,8 @@ class ProductPage extends StatelessWidget {
   }
 
   Widget _buildImages(BuildContext context) {
+    Map product = widget.product;
+
     return ListView(
       children: product['images'].map<Widget>((imageUrl) {
         String imagePath = imageUrl;

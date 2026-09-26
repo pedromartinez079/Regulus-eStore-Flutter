@@ -140,6 +140,32 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     print('build _GalleryScreenState...');
     ref.watch(filterProvider);
 
+    void onSelected(BuildContext context, int item) {
+      switch (item) {
+    case 0:
+      // Search
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => SearchScreen(),
+        )
+      );
+    case 1:
+      // Shopping cart
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => AboutScreen(),
+        )
+      );
+    case 2:
+      // About screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => AboutScreen(),
+        )
+      );
+  }
+    }
+
     if (!_isInformationFetched) {
       _getInformation();
       setState(() {
@@ -247,27 +273,38 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
             },
             icon: Icon(Icons.filter_alt),
           ),
-          // Search
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => SearchScreen(),
+          // Popup menu
+          PopupMenuButton<int>(
+            onSelected: (item) => onSelected(context, item),
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                value: 0,
+                child: Row(
+                  children: [
+                    Icon(Icons.search),
+                    Text(' Search'),
+                  ],
                 )
-              );
-            },
-            icon: Icon(Icons.search),
-          ),
-          // About screen
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => AboutScreen(),
+              ),
+              PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    Text(' Cart'),
+                  ],
                 )
-              );
-            },
-            icon: Icon(Icons.info),
+              ),
+              PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.info),
+                    Text(' About'),
+                  ],
+                )
+              ),
+            ],
           ),
         ],
       ),
