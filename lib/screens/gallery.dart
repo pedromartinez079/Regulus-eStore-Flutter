@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:e_store/services/regulus_vercel_api.dart';
 import 'package:e_store/screens/filter.dart';
@@ -8,7 +9,6 @@ import 'package:e_store/screens/about.dart';
 import 'package:e_store/screens/search.dart';
 import 'package:e_store/widgets/products_grid.dart';
 import 'package:e_store/providers/filter_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GalleryScreen extends ConsumerStatefulWidget {
   const GalleryScreen({super.key});

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:e_store/providers/cart_provider.dart';
 
@@ -17,46 +19,59 @@ class ProductScreen extends ConsumerStatefulWidget {
 
 class _ProductScreenState extends ConsumerState<ProductScreen> {
   num _quantity = 0;
+  bool _isCartPrefFetched = false;
 
-  void _addCart(Map product, List cart) {
-      //List cart = ref.read(cartProvider.notifier).getCart();
-      List list = List.from(cart);
-      num quantity = 0;
+  void _addCart(Map product) async { 
+    final pref = await SharedPreferences.getInstance();
 
-      for (Map p in list) {
-        if (p['code']==product['code']) {
-          p['quantity'] += 1;
-          quantity = p['quantity'];
-        }
-      }
-
-      if (quantity == 0) {
-        quantity += 1;
-        list.add({
-          'code': product['code'],
-          'pricePEN': product['pricePEN'],
-          'priceUSD': product['priceUSD'],
-          'quantity': quantity,
-        });
-      }
-      
-      ref.read(cartProvider.notifier).setCart(Cart(list: list));
-      setState(() {
-        _quantity = quantity;
-      });
-      print(ref.read(cartProvider.notifier).getCart());
+    if (_quantity < 1) {
+      Map item = {
+        'code': product['code'],
+        'pricePEN': product['pricePEN'],
+        'priceUSD': product['priceUSD'],
+        'quantity': 1,
+      }; 
+      ref.read(cartProvider.notifier).addItem(item);
+    } else {
+      ref.read(cartProvider.notifier)
+        .setItemQuantity(product['code'], _quantity += 1);
     }
+    setState(() {
+      _quantity += 1;
+    });
+    print('cartProv: ${ref.read(cartProvider.notifier).getCart()}');
+    await pref.setString('cart', jsonEncode(ref.read(cartProvider.notifier).getCart()));
+  }
+
+  void _getCartPref() async {
+    final pref = await SharedPreferences.getInstance();
+    final cartPref = pref.getString('cart');
+
+    if (cartPref != null) {
+      List list = jsonDecode(cartPref); print('cartPref: $list');
+      ref.read(cartProvider.notifier).setCart(Cart(list: list));
+    }
+    
+    setState(() {
+      _isCartPrefFetched = true;
+    });
+    
+  }
 
   @override
   Widget build(BuildContext context) {
     Map product = widget.product;
-    List cart = ref.read(cartProvider.notifier).getCart();
-    for (Map p in cart) {
-      if (p['code']==product['code']) {
-        setState(() {
-          _quantity = p['quantity'];
-        });
-      }
+    
+    if (!ref.read(cartProvider.notifier).getCart().isNotEmpty) {
+      if (!_isCartPrefFetched) {_getCartPref();}
+    }
+
+    Map item = ref.read(cartProvider.notifier).getItem(product['code']);
+    
+    if (item.keys.contains('quantity')) {
+      setState(() {
+        _quantity = item['quantity'];
+      });
     }
 
     return Scaffold(
@@ -65,7 +80,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
         actions: [
           // Add to shoping cart
           IconButton(
-            onPressed: () {_addCart(product, cart);},
+            onPressed: () {_addCart(product);},
             icon: Icon(Icons.add_shopping_cart),
           ),
           // Buy quantity
