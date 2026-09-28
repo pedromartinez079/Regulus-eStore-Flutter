@@ -34,10 +34,11 @@ class CartNotifier extends StateNotifier<Cart> {
   }
 
   void deleteItem(String code) {
-    List list = List.from(state.list);
+    //List list = List.from(state.list);
+    List list = [];
 
-    for (Map i in list) {
-      if (i['code'] == code) { list.remove(i); }
+    for (Map i in state.list) {
+      if (i['code'] != code) { list.add(i); }
     }
     state = Cart(list: list);
   }
@@ -49,6 +50,22 @@ class CartNotifier extends StateNotifier<Cart> {
       if (i['code'] == code) { i['quantity'] = quantity; }
     }
     state = Cart(list: list);
+  }
+
+  double getTotalPEN() {
+    double totalPEN = 0;
+    for (Map i in state.list) {
+      totalPEN += i['pricePEN'] * i['quantity'];
+    }
+    return totalPEN;
+  }
+
+  double getTotalUSD() {
+    double totalUSD = 0;
+    for (Map i in state.list) {
+      totalUSD += i['priceUSD'] * i['quantity'];
+    }
+    return totalUSD;
   }
 }
 

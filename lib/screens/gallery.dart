@@ -7,6 +7,7 @@ import 'package:e_store/services/regulus_vercel_api.dart';
 import 'package:e_store/screens/filter.dart';
 import 'package:e_store/screens/about.dart';
 import 'package:e_store/screens/search.dart';
+import 'package:e_store/screens/cart.dart';
 import 'package:e_store/widgets/products_grid.dart';
 import 'package:e_store/providers/filter_provider.dart';
 
@@ -38,7 +39,6 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
   }
 
   void _getInformation() async {
-    print('getting information...');
     final categories = await fetchFromRegulusVercel('productlines');
     final products = await fetchFromRegulusVercel('products$_sort');
 
@@ -71,7 +71,6 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
   }
 
   void _applyFilter(List products) async {
-    print('filtering products...');
     List filteredCategories = [];
     final filter = ref.read(filterProvider.notifier).getFilter();
     final pref = await SharedPreferences.getInstance();
@@ -137,7 +136,6 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('build _GalleryScreenState...');
     ref.watch(filterProvider);
 
     void onSelected(BuildContext context, int item) {
@@ -153,7 +151,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
       // Shopping cart
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (ctx) => AboutScreen(),
+          builder: (ctx) => ShoppingCartScreen(),
         )
       );
     case 2:
@@ -296,7 +294,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                 )
               ),
               PopupMenuItem<int>(
-                value: 1,
+                value: 2,
                 child: Row(
                   children: [
                     Icon(Icons.info),

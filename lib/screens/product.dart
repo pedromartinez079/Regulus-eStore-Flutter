@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:e_store/providers/cart_provider.dart';
+import 'package:e_store/screens/cart.dart';
 
 class ProductScreen extends ConsumerStatefulWidget {
   const ProductScreen({super.key, required this.product});
@@ -39,7 +40,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
     setState(() {
       _quantity += 1;
     });
-    print('cartProv: ${ref.read(cartProvider.notifier).getCart()}');
+    
     await pref.setString('cart', jsonEncode(ref.read(cartProvider.notifier).getCart()));
   }
 
@@ -48,14 +49,13 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
     final cartPref = pref.getString('cart');
 
     if (cartPref != null) {
-      List list = jsonDecode(cartPref); print('cartPref: $list');
+      List list = jsonDecode(cartPref);
       ref.read(cartProvider.notifier).setCart(Cart(list: list));
     }
     
     setState(() {
       _isCartPrefFetched = true;
-    });
-    
+    });    
   }
 
   @override
@@ -88,7 +88,12 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
           // Shopping cart
           IconButton(
             onPressed: () {
-
+              // Shopping cart
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => ShoppingCartScreen(),
+                )
+              );
             },
             icon: Icon(Icons.shopping_cart),
           ),
