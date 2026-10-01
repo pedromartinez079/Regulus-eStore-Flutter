@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:e_store/widgets/cart_item.dart';
 import 'package:e_store/providers/cart_provider.dart';
+import 'package:e_store/services/regulus_vercel_api.dart';
 
 class ShoppingCartScreen extends ConsumerStatefulWidget {
   const ShoppingCartScreen({super.key});
@@ -46,6 +48,28 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
     });
   }
 
+  void _onItemTap(String productCode) async {
+    final itemInformation = await fetchFromRegulusVercel('products?product=$productCode');
+
+    if (!mounted) return;
+
+    if (itemInformation.keys.contains('products') && itemInformation['products'].length > 0) {
+      final productDetails = itemInformation['products'][0];
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return CartItemInformation(product: productDetails);
+        }
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load product details')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartProvider);
@@ -83,44 +107,47 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
                   itemCount: cartState.list.length,
                   itemBuilder: (context, index) {
                     final item = cartState.list[index];
-                    return ListTile(
-                      title: Text('Item: ${item['code']}'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Price PEN: ${item['pricePEN']}'),
-                          Text('Price USD: ${item['priceUSD']}'),
-                          Row(
-                            children: [
-                              Text('Quantity: ${item['quantity']}'),
-                              IconButton(
-                                icon: Icon(Icons.remove),
-                                onPressed: () {
-                                  if (item['quantity'] > 1) {
-                                    cartNotifier.setItemQuantity(item['code'], item['quantity'] - 1);
-                                  } else {
-                                    cartNotifier.deleteItem(item['code']);
-                                  }
-                                  _updateCartPref();
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.add),
-                                onPressed: () {
-                                  cartNotifier.setItemQuantity(item['code'], item['quantity'] + 1);
-                                  _updateCartPref();
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          cartNotifier.deleteItem(item['code']);
-                          _updateCartPref();
-                        },
+                    return GestureDetector(
+                      onTap: () => _onItemTap(item['code']),
+                      child: ListTile(
+                        title: Text('Item: ${item['code']}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Price PEN: ${item['pricePEN']}'),
+                            Text('Price USD: ${item['priceUSD']}'),
+                            Row(
+                              children: [
+                                Text('Quantity: ${item['quantity']}'),
+                                IconButton(
+                                  icon: Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (item['quantity'] > 1) {
+                                      cartNotifier.setItemQuantity(item['code'], item['quantity'] - 1);
+                                    } else {
+                                      cartNotifier.deleteItem(item['code']);
+                                    }
+                                    _updateCartPref();
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.add),
+                                  onPressed: () {
+                                    cartNotifier.setItemQuantity(item['code'], item['quantity'] + 1);
+                                    _updateCartPref();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            cartNotifier.deleteItem(item['code']);
+                            _updateCartPref();
+                          },
+                        ),
                       ),
                     );
                   },
