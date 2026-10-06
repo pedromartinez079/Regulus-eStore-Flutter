@@ -50,7 +50,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
 
   void _onItemTap(String productCode) async {
     final itemInformation = await fetchFromRegulusVercel('products?product=$productCode');
-
+    
     if (!mounted) return;
 
     if (itemInformation.keys.contains('products') && itemInformation['products'].length > 0) {
