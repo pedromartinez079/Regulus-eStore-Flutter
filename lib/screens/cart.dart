@@ -70,6 +70,44 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
     }
   }
 
+  void _onPaypalTap() {
+    const String fallbackImagePath = 'assets/images/under-construction.jpg';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Image.network(
+                  fallbackImagePath,
+                  fit: BoxFit.cover,
+                  height: 300,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      fallbackImagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    );
+                  },
+                ),
+              ),
+              Text('Paypal demo payment under construction', style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartProvider);
@@ -96,7 +134,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
                 Text('Total USD: $_totalUSD'),
                 IconButton(
                   icon: Icon(Icons.paypal),
-                  onPressed: () {/* paypal procedure */},
+                  onPressed: () => _onPaypalTap(),
                 ),
               ],
             ),
