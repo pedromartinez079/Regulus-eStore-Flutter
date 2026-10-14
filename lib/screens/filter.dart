@@ -62,8 +62,6 @@ class _FilterScreenState extends ConsumerState<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //print(widget.options);
-    //print(_selected);
     if (!_isFilterFetched) _getFilter();
 
     return Scaffold(

@@ -33,8 +33,6 @@ class CartItemInformation extends StatelessWidget {
             ),
           ),
           Text('Product Name: ${product['title']}', style: TextStyle(fontWeight: FontWeight.bold)),
-          //Text('Price PEN: ${product['pricePEN']}'),
-          //Text('Price USD: ${product['priceUSD']}'),
         ],
       ),
     );

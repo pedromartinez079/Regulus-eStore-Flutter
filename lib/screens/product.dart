@@ -131,7 +131,6 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                 Divider(),
                 _buildPriceStockSection(context),
                 _buildPaymentSection(context),
-                //_buildImages(context),
               ],
             ),
           ),

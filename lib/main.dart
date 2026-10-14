@@ -11,6 +11,7 @@ final colorScheme = ColorScheme.fromSeed(
   dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
   seedColor: const Color.fromARGB(255, 255, 255, 255),
 );
+
 // Theme definition
 final theme = ThemeData().copyWith(
   scaffoldBackgroundColor: colorScheme.surface,
@@ -37,13 +38,7 @@ class MyHttpOverrides extends HttpOverrides {
      }
    }
 
-
 void main() async {
-  /*
-  WidgetsFlutterBinding.ensureInitialized();
-  final categories = await fetchFromRegulusVercel('productlines');
-  final products = await fetchFromRegulusVercel('products');
-  */
   HttpOverrides.global = MyHttpOverrides();
 
   runApp(
@@ -60,14 +55,6 @@ class RegulusStore extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Set categories in Provider
-      //final settingsNotifier = ref.read(settingsProvider.notifier);
-      //settingsNotifier.setSettings(Settings(token: token));
-      // Set products in Provider
-      //final walletsNotifier = ref.read(walletsProvider.notifier);
-      //walletsNotifier.setWallets(Wallets(wallets: wallets));
-    });
     
     return MaterialApp(
       title: 'Regulus Store',

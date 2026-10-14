@@ -13,7 +13,6 @@ Future<Map<String, dynamic>> fetchFromRegulusVercel(String route) async {
   if (response.statusCode == 200) {
     return json.decode(response.body) as Map<String, dynamic>;
   } else {
-    //print('${response.statusCode} ${response.reasonPhrase}');
     return {'error': true, 'code': response.statusCode, 'text': response.reasonPhrase};
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 
 class Cart {
-  final List list; // Map > {'code': '', 'pricePEN': 0, 'priceUSD': 0, 'quantity': 0}
+  final List list; // List of Maps: {'code': '', 'pricePEN': 0, 'priceUSD': 0, 'quantity': 0}
 
   const Cart({
     required this.list,
