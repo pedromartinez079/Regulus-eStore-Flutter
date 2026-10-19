@@ -93,7 +93,7 @@ class AboutScreen extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    final Uri url = Uri.parse('https://inkawall.vercel.app/privacy-policy/bitcoin-blockchain-explorer');
+                    final Uri url = Uri.parse('https://inkawall.vercel.app/privacy-policy/e-store');
                     if (await canLaunchUrl(url)) {
                       await launchUrl(url);
                     }
