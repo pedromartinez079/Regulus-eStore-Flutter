@@ -13,7 +13,7 @@ A gallery of products Regulus EIRL can provide. This application was developed u
 
 ## Install
 
-[Google Play](https://play.google.com/)
+[Google Play](https://play.google.com/store/apps/details?id=com.inkawall.e_store)
 
 ## Authors
 
