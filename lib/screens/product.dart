@@ -254,9 +254,14 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
 
   Widget _buildImages(BuildContext context) {
     Map product = widget.product;
+    List images = ['assets/images/under-construction.jpg',];
+    if (product.containsKey('images') && product['images'] is List &&
+      product['images'].isNotEmpty) {
+      images = product['images'];
+    }
 
     return ListView(
-      children: product['images'].map<Widget>((imageUrl) {
+      children: images.map<Widget>((imageUrl) {
         String imagePath = imageUrl;
         const fallbackImagePath = 'assets/images/under-construction.jpg';
         if (!imageUrl.contains('on-line') &&

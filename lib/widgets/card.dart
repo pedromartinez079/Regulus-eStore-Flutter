@@ -8,7 +8,11 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imagePath = product['images'][0];
+    String imagePath = 'assets/images/under-construction.jpg';
+    if (product.containsKey('images') && product['images'] is List &&
+      product['images'].isNotEmpty) {
+      imagePath = product['images'][0];
+    }
     const String fallbackImagePath = 'assets/images/under-construction.jpg';
 
     if (!imagePath.contains('on-line') && !imagePath.contains('carrusel')) {

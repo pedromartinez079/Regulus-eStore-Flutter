@@ -7,6 +7,11 @@ class CartItemInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String imagePath = 'assets/images/under-construction.jpg';
+    if (product.containsKey('images') && product['images'] is List &&
+      product['images'].isNotEmpty) {
+      imagePath = product['images'][0];
+    }
     const String fallbackImagePath = 'assets/images/under-construction.jpg';
 
     return Padding(
@@ -19,7 +24,7 @@ class CartItemInformation extends StatelessWidget {
             height: 200,
             width: double.infinity,
             child: Image.network(
-              product['images'][0],
+              imagePath,
               fit: BoxFit.cover,
               height: 300,
               width: double.infinity,
